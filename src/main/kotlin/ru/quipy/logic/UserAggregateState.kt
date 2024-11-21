@@ -24,7 +24,8 @@ class UserAggregateState : AggregateState<String, UserAggregate> {
         email = event.email
         userName = event.userName
         password = event.password
-        updatedAt = createdAt
+        createdAt = event.createdAt
+        updatedAt = event.createdAt
     }
 
     @StateTransitionFunc

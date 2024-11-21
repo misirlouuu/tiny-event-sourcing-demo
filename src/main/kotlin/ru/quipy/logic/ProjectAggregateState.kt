@@ -8,13 +8,15 @@ import java.util.*
 // Service's business logic
 class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
     private lateinit var projectId: UUID
+    private var defaultStatus: Status = Status("CREATED", Color.GREY)
     var createdAt: Long = System.currentTimeMillis()
     var updatedAt: Long = System.currentTimeMillis()
 
     lateinit var projectTitle: String
-    lateinit var creatorId: String
-    var tasks = mutableMapOf<UUID, TaskEntity>()
-    var projectTags = mutableMapOf<UUID, TagEntity>()
+    lateinit var creatorId: UUID
+    var tasks = mutableListOf<TaskEntity>()
+    var statuses = mutableMapOf<String, Status>("CREATED" to defaultStatus)
+    var participants = mutableListOf<UUID>()
 
     override fun getId() = projectId
 
@@ -24,39 +26,98 @@ class ProjectAggregateState : AggregateState<UUID, ProjectAggregate> {
         projectId = event.projectId
         projectTitle = event.title
         creatorId = event.creatorId
-        updatedAt = createdAt
-    }
+        participants.add(event.creatorId)
 
-    @StateTransitionFunc
-    fun tagCreatedApply(event: TagCreatedEvent) {
-        projectTags[event.tagId] = TagEntity(event.tagId, event.tagName)
-        updatedAt = createdAt
+        createdAt = event.createdAt
+        updatedAt = event.createdAt
     }
 
     @StateTransitionFunc
     fun taskCreatedApply(event: TaskCreatedEvent) {
-        tasks[event.taskId] = TaskEntity(event.taskId, event.taskName, mutableSetOf())
-        updatedAt = createdAt
+        tasks.add(TaskEntity(event.taskId, event.taskName, "", defaultStatus, mutableListOf()))
+        updatedAt = event.createdAt
     }
+
+    @StateTransitionFunc
+    fun taskInfoUpdatedApply(event: TaskInfoUpdatedEvent) {
+        val updatedTask = tasks.find { task -> task.id == event.taskId }
+        if (updatedTask != null) {
+            updatedTask.name = event.taskName
+            updatedTask.body = event.taskBody
+            updatedAt = event.createdAt
+        }
+    }
+
+    @StateTransitionFunc
+    fun participantAddedApply(event: ParticipantAddedEvent) {
+        participants.add(event.participantId)
+        updatedAt = event.createdAt
+    }
+
+    @StateTransitionFunc
+    fun participantDeletedApply(event: ParticipantDeletedEvent) {
+        participants.remove(event.participantId)
+        updatedAt = event.createdAt
+    }
+
+    @StateTransitionFunc
+    fun assigneeAddedApply(event: AssigneeAddedEvent) {
+        val updatedTask = tasks.find { task -> task.id == event.taskId }
+        if (updatedTask != null) {
+            updatedTask.assignees.add(event.assigneeId)
+            updatedAt = event.createdAt
+        }
+    }
+
+    @StateTransitionFunc
+    fun assigneeDeletedApply(event: AssigneeDeletedEvent) {
+        val updatedTask = tasks.find { task -> task.id == event.taskId }
+        if (updatedTask != null) {
+            updatedTask.assignees.remove(event.assigneeId)
+            updatedAt = event.createdAt
+        }
+    }
+
+    @StateTransitionFunc
+    fun statusCreatedApply(event: StatusCreatedEvent) {
+        statuses[event.statusName] = Status(event.statusName, Color.valueOf(event.statusColor))
+        updatedAt = event.createdAt
+    }
+
+    @StateTransitionFunc
+    fun statusDeletedApply(event: StatusDeletedEvent) {
+        statuses.remove(event.statusName)
+        updatedAt = event.createdAt
+    }
+
+
+    @StateTransitionFunc
+    fun taskStatusChangedApply(event: TaskStatusChangedEvent) {
+        val updatedTask = tasks.find { task -> task.id == event.taskId }
+        if (updatedTask != null) {
+            val newStatus = statuses[event.statusName]
+            if (newStatus != null) {
+                updatedTask.status = newStatus
+                updatedAt = event.createdAt
+            }
+        }
+    }
+   
 }
 
 data class TaskEntity(
-    val id: UUID = UUID.randomUUID(),
-    val name: String,
-    val tagsAssigned: MutableSet<UUID>
+    val id: UUID,
+    var name: String,
+    var body: String,
+    var status: Status,
+    var assignees: MutableList<UUID>
 )
 
-data class TagEntity(
-    val id: UUID = UUID.randomUUID(),
-    val name: String
-)
-
-/**
- * Demonstrates that the transition functions might be representer by "extension" functions, not only class members functions
- */
-@StateTransitionFunc
-fun ProjectAggregateState.tagAssignedApply(event: TagAssignedToTaskEvent) {
-    tasks[event.taskId]?.tagsAssigned?.add(event.tagId)
-        ?: throw IllegalArgumentException("No such task: ${event.taskId}")
-    updatedAt = createdAt
+enum class Color {
+    GREY, BLUE, GREEN, YELLOW, ORANGE, RED
 }
+
+data class Status(
+    val name: String,
+    val color: Color
+)
