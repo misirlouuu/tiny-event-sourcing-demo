@@ -28,7 +28,7 @@ fun ProjectAggregateState.addTask(taskId: UUID, name: String): TaskCreatedEvent 
     return TaskCreatedEvent(projectId = this.getId(), taskId = taskId, taskName = name)
 }
 fun ProjectAggregateState.updateTaskInfo(taskId: UUID, taskName: String, taskBody: String): TaskInfoUpdatedEvent {
-    if (this.tasks.find { task -> task.id === taskId } == null) {
+    if (this.tasks.find { task -> task.id == taskId } == null) {
         throw IllegalArgumentException("No task with id: $taskId in project")
     }
     return TaskInfoUpdatedEvent(projectId = this.getId(), taskId = taskId, taskName = taskName, taskBody = taskBody)
@@ -84,7 +84,7 @@ fun ProjectAggregateState.changeTaskStatus(taskId: UUID, statusName: String): Ta
     if (!this.statuses.containsKey(statusName)){
         throw IllegalArgumentException("No status with name $statusName in project")
     }
-    if (this.tasks.find { task -> task.id === taskId } == null) {
+    if (this.tasks.find { task -> task.id == taskId } == null) {
         throw IllegalArgumentException("No task with id: $taskId in project")
     }
     return TaskStatusChangedEvent(projectId = this.getId(), taskId = taskId, statusName = statusName)
