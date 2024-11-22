@@ -18,23 +18,23 @@ import java.util.*
 @RestController
 @RequestMapping("/users")
 class UserController(
-    val userEsService: EventSourcingService<String, UserAggregate, UserAggregateState>
+    val userEsService: EventSourcingService<UUID, UserAggregate, UserAggregateState>
 ) {
     
     @PostMapping("/{nickname}")
     fun registerUser(@PathVariable nickname: String, @RequestParam email: String, @RequestParam userName: String, @RequestParam password: String) : UserRegisteredEvent {
-        return userEsService.create { it.register(nickname, email, userName, password) }
+        return userEsService.create { it.register(UUID.randomUUID(), nickname, email, userName, password) }
     }
 
-    @GetMapping("/{nickname}") //мб nickname
-    fun getUser(@PathVariable nickname: String) : UserAggregateState? {
-        return userEsService.getState(nickname)
+    @GetMapping("/{userId}")
+    fun getUser(@PathVariable userId: UUID) : UserAggregateState? {
+        return userEsService.getState(userId)
     }
 
-    @PostMapping("/{nickname}/updateName")
-    fun updateUserName(@PathVariable nickname: String, @RequestParam userName: String) : UserNameUpdatedEvent {
-        return userEsService.update(nickname) { //вот это че за методы вообще
-            it.updateName(userName)
+    @PostMapping("/{userId}/updateName")
+    fun updateUserName(@PathVariable userId: UUID, @RequestParam newUserName: String) : UserNameUpdatedEvent {
+        return userEsService.update(userId) { 
+            it.updateName(newUserName)
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.*
 // Commands : takes something -> returns event
 // Here the commands are represented by extension functions, but also can be the class member functions
 
-fun UserAggregateState.register(nickname: String, email: String, userName: String, password: String): UserRegisteredEvent {
+fun UserAggregateState.register(userId: UUID, nickname: String, email: String, userName: String, password: String): UserRegisteredEvent {
     if (userName.isNullOrBlank()) {
         throw IllegalArgumentException("Empty userName")
     }
@@ -19,6 +19,7 @@ fun UserAggregateState.register(nickname: String, email: String, userName: Strin
         throw IllegalArgumentException("Empty password")
     }
     return UserRegisteredEvent(
+        userId = userId,
         nickname = nickname,
         email = email,
         userName = userName,
@@ -26,9 +27,9 @@ fun UserAggregateState.register(nickname: String, email: String, userName: Strin
     )
 }
 
-fun UserAggregateState.updateName(userName: String): UserNameUpdatedEvent {
+fun UserAggregateState.updateName(newUserName: String): UserNameUpdatedEvent {
     if (userName.isNullOrBlank()) {
         throw IllegalArgumentException("Empty userName")
     }
-    return UserNameUpdatedEvent(nickname = this.getId(), userName = userName)
+    return UserNameUpdatedEvent(userId = this.getId(), userName = newUserName)
 }

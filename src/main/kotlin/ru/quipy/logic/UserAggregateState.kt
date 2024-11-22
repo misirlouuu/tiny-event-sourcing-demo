@@ -6,20 +6,22 @@ import ru.quipy.domain.AggregateState
 import java.util.*
 
 // Service's business logic
-class UserAggregateState : AggregateState<String, UserAggregate> {
-    private lateinit var nickname: String
+class UserAggregateState : AggregateState<UUID, UserAggregate> {
+    private lateinit var userId: UUID
+    lateinit var nickname: String
     var createdAt: Long = System.currentTimeMillis()
-    var updatedAt: Long = System.currentTimeMillis() //хз надо ли
+    var updatedAt: Long = System.currentTimeMillis()
 
     lateinit var email: String
     lateinit var userName: String
     private lateinit var password: String 
 
-    override fun getId() = nickname
+    override fun getId() = userId
 
     // State transition functions which is represented by the class member function
     @StateTransitionFunc
     fun userRegisteredApply(event: UserRegisteredEvent) {
+        userId = event.userId
         nickname = event.nickname
         email = event.email
         userName = event.userName
@@ -31,6 +33,6 @@ class UserAggregateState : AggregateState<String, UserAggregate> {
     @StateTransitionFunc
     fun userNameUpdatedApply(event: UserNameUpdatedEvent) {
         userName = event.userName
-        updatedAt = event.createdAt //event.createdAt?
+        updatedAt = event.createdAt
     }
 }
