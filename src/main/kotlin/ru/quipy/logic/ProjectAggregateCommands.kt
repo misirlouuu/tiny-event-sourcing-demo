@@ -85,6 +85,9 @@ fun ProjectAggregateState.deleteStatus(statusName: String): StatusDeletedEvent {
     if (!this.statuses.containsKey(statusName)){
         throw IllegalArgumentException("No status with name $statusName in project")
     }
+    if (statusName == "CREATED") {
+        throw IllegalArgumentException("Default status can't be deleted")
+    }
     return StatusDeletedEvent(projectId = this.getId(), statusName = statusName)
 }
 
