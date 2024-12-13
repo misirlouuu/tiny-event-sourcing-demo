@@ -6,4 +6,8 @@ import java.util.UUID
 
 interface TaskRepository: MongoRepository<TaskView.Task, UUID> {
     fun findAllByProjectId(projectId: UUID): MutableIterable<TaskView.Task>?
+
+//    fun findAllByStatusName(statusName: String): MutableIterable<TaskView.Task>?
+
+    fun findAllByProjectIdAndStatusName(projectId: UUID, statusName: String): MutableIterable<TaskView.Task>?
 }
