@@ -1,5 +1,6 @@
 package ru.quipy.projections.service
 
+import org.springframework.stereotype.Service
 import ru.quipy.api.ParticipantAddedEvent
 import ru.quipy.api.ParticipantDeletedEvent
 import ru.quipy.api.ProjectAggregate
@@ -12,6 +13,7 @@ import ru.quipy.streams.AggregateSubscriptionsManager
 import java.util.*
 import javax.annotation.PostConstruct
 
+@Service
 class ProjectViewService(
     private val projectRepository: ProjectRepository,
     private val subscriptionsManager: AggregateSubscriptionsManager,

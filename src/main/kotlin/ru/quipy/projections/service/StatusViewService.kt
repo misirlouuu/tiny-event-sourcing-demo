@@ -1,5 +1,6 @@
 package ru.quipy.projections.service
 
+import org.springframework.stereotype.Service
 import ru.quipy.api.ProjectAggregate
 import ru.quipy.api.StatusCreatedEvent
 import ru.quipy.api.StatusDeletedEvent
@@ -9,6 +10,7 @@ import ru.quipy.streams.AggregateSubscriptionsManager
 import java.util.*
 import javax.annotation.PostConstruct
 
+@Service
 class StatusViewService(
     private val statusRepository: StatusRepository,
     private val subscriptionsManager: AggregateSubscriptionsManager

@@ -1,5 +1,6 @@
 package ru.quipy.projections.service
 
+import org.springframework.stereotype.Service
 import ru.quipy.api.UserAggregate
 import ru.quipy.api.UserRegisteredEvent
 import ru.quipy.logic.UserAggregateState
@@ -11,6 +12,7 @@ import ru.quipy.streams.AggregateSubscriptionsManager
 import java.util.*
 import javax.annotation.PostConstruct
 
+@Service
 class UserViewService(
     private val projectRepository: ProjectRepository,
     private val subscriptionsManager: AggregateSubscriptionsManager,

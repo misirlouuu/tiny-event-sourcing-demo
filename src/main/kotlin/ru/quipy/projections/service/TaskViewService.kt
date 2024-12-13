@@ -1,5 +1,6 @@
 package ru.quipy.projections.service
 
+import org.springframework.stereotype.Service
 import ru.quipy.api.*
 import ru.quipy.projections.repository.StatusRepository
 import ru.quipy.projections.repository.TaskRepository
@@ -7,6 +8,7 @@ import ru.quipy.projections.views.TaskView
 import ru.quipy.streams.AggregateSubscriptionsManager
 import javax.annotation.PostConstruct
 
+@Service
 class TaskViewService(
     private val taskRepository: TaskRepository,
     private val statusRepository: StatusRepository,
