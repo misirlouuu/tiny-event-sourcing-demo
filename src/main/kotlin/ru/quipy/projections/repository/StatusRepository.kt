@@ -5,7 +5,7 @@ import ru.quipy.projections.views.StatusView
 import java.util.UUID
 
 interface StatusRepository : MongoRepository<StatusView.Status, UUID> {
-    fun findAllByStatusName(statusName: String): MutableIterable<StatusView.Status>?
+    fun findByStatusName(statusName: String): StatusView.Status?
 
     fun findAllByStatusColor(statusColor: String): MutableIterable<StatusView.Status>?
 

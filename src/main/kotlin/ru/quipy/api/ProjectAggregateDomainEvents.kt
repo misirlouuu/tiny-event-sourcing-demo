@@ -32,6 +32,8 @@ class TaskCreatedEvent(
     val projectId: UUID,
     val taskId: UUID,
     val taskName: String,
+    val taskDescription: String,
+    val statusName: String,
     createdAt: Long = System.currentTimeMillis(),
 ) : Event<ProjectAggregate>(
     name = TASK_CREATED_EVENT,
@@ -95,8 +97,10 @@ class AssigneeDeletedEvent(
 @DomainEvent(name = STATUS_CREATED_EVENT)
 class StatusCreatedEvent(
     val projectId: UUID,
+    val statusId: UUID,
     val statusName: String,
     val statusColor: String,
+    var orderNumber: Int,
     createdAt: Long = System.currentTimeMillis(),
 ): Event<ProjectAggregate>(
     name =STATUS_CREATED_EVENT,
