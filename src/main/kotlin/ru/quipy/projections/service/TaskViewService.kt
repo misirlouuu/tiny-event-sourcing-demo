@@ -21,21 +21,21 @@ class TaskViewService(
                 createTask(event)
             }
 
-            `when`(TaskInfoUpdatedEvent::class) { event ->
-                updateTaskInfo(event)
-            }
-
-            `when`(AssigneeAddedEvent::class) { event ->
-                addAssignee(event)
-            }
-
-            `when`(AssigneeDeletedEvent::class) { event ->
-                deleteAssignee(event)
-            }
-
-            `when`(TaskStatusChangedEvent::class) { event ->
-                changeTaskStatus(event)
-            }
+//            `when`(TaskInfoUpdatedEvent::class) { event ->
+//                updateTaskInfo(event)
+//            }
+//
+//            `when`(AssigneeAddedEvent::class) { event ->
+//                addAssignee(event)
+//            }
+//
+//            `when`(AssigneeDeletedEvent::class) { event ->
+//                deleteAssignee(event)
+//            }
+//
+//            `when`(TaskStatusChangedEvent::class) { event ->
+//                changeTaskStatus(event)
+//            }
         }
     }
 
@@ -45,8 +45,8 @@ class TaskViewService(
                 event.projectId,
                 event.taskId,
                 event.taskName,
-                event.createdAt,
                 event.statusName,
+                event.createdAt,
                 mutableListOf()
             )
         )
